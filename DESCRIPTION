@@ -1,0 +1,23 @@
+Package: TECANTools
+Type: Package
+Title: Various R Scripts to turn TECAN excel sheets into a useable format
+Version: 0.1.0
+Author: Julian Dicken
+Maintainer: Julian Dicken <julian@dicken.de>
+Description: Various R Scripts to turn TECAN excel sheets into a useable format.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports:
+	dplyr,
+	readxl,
+	purrr,
+	magrittr,
+	rlang,
+	data.table,
+	tidyr,
+	stats,  
+	ggplot2,
+  colorspace,
+  shadowtext
+RoxygenNote: 7.3.2
