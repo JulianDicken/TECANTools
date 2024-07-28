@@ -19,11 +19,6 @@ Extract.data_simple <- function(
     # this is to suppress rename warnings
     .name_repair = "unique_quiet"
   )
-  # bind a data.set row to the data to differentiate data.sets
-  data.in <- cbind(
-    Dataset = dataset$Name,
-    data.in
-  )
 
   if (.debug) {
     print(data.in)
@@ -36,9 +31,9 @@ Extract.data_simple <- function(
 
   # turn this data into  long format data. This needs to be done BEFORE detecting NAs because of the data format
   data.out <- data.in %>%
-    dplyr::rename(Row = 2) %>%
+    dplyr::rename(Row = 1) %>%
     tidyr::pivot_longer(
-      cols = !c(.data$Row, .data$Dataset),
+      cols = !c(.data$Row),
       names_to = "Column",
       values_to = datavalue.name
     ) %>%
@@ -51,7 +46,7 @@ Extract.data_simple <- function(
       )
     ) %>%
     dplyr::select(
-      .data$Dataset, .data$Row, .data$Column, .data$Coordinate, !!rlang::sym(datavalue.name)
+      .data$Row, .data$Column, .data$Coordinate, !!rlang::sym(datavalue.name)
     )
 
   if (na.warn && any(is.na(data.out))) {
@@ -80,6 +75,13 @@ Extract.data_simple <- function(
     data.out <- data.out %>%
       dplyr::mutate(!!rlang::sym(datagroup.name) := eval(parse(text = datagroup.conditions)))
   }
+
+
+  data.out <- cbind(
+    Source  = filepath,
+    Dataset = dataset$Name,
+    data.out
+  )
 
   return(data.out)
 }

@@ -15,7 +15,7 @@
 #' @return data.frame containing all measurements in long format.
 #' @export
 Extract.Data <- function(
-    filepath,
+    path,
     datagroups,
     datavalue.name   = "Value",
     datagroup.leader = "Coordinate",
@@ -29,20 +29,27 @@ Extract.Data <- function(
   # -----------------
   datasets.meta <- Const.dataset_meta()
 
-  # --- Input validation ---
-  # ************************
-  # ------------------------
-  if (!file.exists(filepath)) {
-    filepath.modified <- paste0(filepath, c(".xls", ".xlsx"))
-    if (any(file.exists(filepath.modified))) {
-      filepath <- filepath.modified[[which(file.exists(filepath.modified))]]
-    } else {
-      stop(paste0(
-        "File '", filepath, "' or '",
-        filepath.modified, "' does not exist."
-      ))
+  # --- Input deconstruction and file validation ---
+  # ************************************************
+  # ------------------------------------------------
+  files <- unlist(lapply(as.vector(path), function(p) {
+    p.valid_suffixes <- c("xls", "xlsx")
+    p.valid_pattern <- paste0(".*\\.(", paste0(p.valid_suffixes, collapse = "|"),")$")
+
+    p.modified <- paste0(path, "." ,p.valid_suffixes)
+    p.existing <- file.exists(p.modified)
+    if (dir.exists(p)) {
+      return(paste0(p, "/", list.files(
+        p, pattern = p.valid_pattern
+      )))
     }
-  }
+    else if (any(p.existing)) {
+      return(p.modified[[match(TRUE, p.existing)]])
+    }
+    else {
+      return(NULL)
+    }
+  }))
 
   if (!is.list(datagroups)) {
     stop(paste0(
@@ -61,74 +68,81 @@ Extract.Data <- function(
     )
   }
 
-  # --- Extract Datasets ---
-  # ************************
-  # ------------------------
-  datasets <- Utility.extract_datasets(
-    filepath = filepath
-  )
-
-  # --- Extract Data ---
-  # ********************
-  # --------------------
+  # --- Process Files ---
+  # *********************
+  # ---------------------
   data.out <- data.frame()
-  for (i in 1:nrow(datasets)) {
-    dataset <- datasets[i, ]
-    print(paste0(
-      "Extracting dataset with name '", dataset$Name,
-      "' at '", dataset$Range, "'"
-    ))
-    dataset.data <- switch(match(dataset$Kind, datasets.meta$Kind),
-      Extract.data_timeseries_multiple(
-        filepath   = filepath,
-        datagroups = datagroups,
 
-        dataset          = dataset,
-        datavalue.name   = datavalue.name,
-        datagroup.leader = datagroup.leader,
-        na.warn = na.warn,
-        na.rm   = na.rm,
+  for (file in files) {
 
-        .debug = .debug
-      ),
-      Extract.data_timeseries_single(
-        filepath   = filepath,
-        datagroups = datagroups,
-
-        dataset          = dataset,
-        datavalue.name   = datavalue.name,
-        datagroup.leader = datagroup.leader,
-        na.warn = na.warn,
-        na.rm   = na.rm,
-
-        .debug = .debug
-      ),
-      Extract.data_snapshot(
-        filepath     = filepath,
-        datagroups   = datagroups,
-
-        dataset          = dataset,
-        datavalue.name   = datavalue.name,
-        datagroup.leader = datagroup.leader,
-        na.warn = na.warn,
-        na.rm   = na.rm,
-
-        .debug = .debug
-      ),
-      Extract.data_simple(
-        filepath     = filepath,
-        datagroups   = datagroups,
-
-        dataset          = dataset,
-        datavalue.name   = datavalue.name,
-        datagroup.leader = datagroup.leader,
-        na.warn = na.warn,
-        na.rm   = na.rm,
-
-        .debug = .debug
-      )
+    # --- Extract Datasets ---
+    # ************************
+    # ------------------------
+    datasets <- Utility.extract_datasets(
+      filepath = file
     )
-    data.out <- dplyr::bind_rows(data.out, dataset.data)
+
+    # --- Extract Data ---
+    # ********************
+    # --------------------
+    for (i in 1:nrow(datasets)) {
+      dataset <- datasets[i, ]
+      print(paste0(
+        "Extracting dataset with name '", dataset$Name,
+        "' at '", dataset$Range, "'"
+      ))
+      dataset.data <- switch(match(dataset$Kind, datasets.meta$Kind),
+        Extract.data_timeseries_multiple(
+          filepath   = file,
+          datagroups = datagroups,
+
+          dataset          = dataset,
+          datavalue.name   = datavalue.name,
+          datagroup.leader = datagroup.leader,
+          na.warn = na.warn,
+          na.rm   = na.rm,
+
+          .debug = .debug
+        ),
+        Extract.data_timeseries_single(
+          filepath   = file,
+          datagroups = datagroups,
+
+          dataset          = dataset,
+          datavalue.name   = datavalue.name,
+          datagroup.leader = datagroup.leader,
+          na.warn = na.warn,
+          na.rm   = na.rm,
+
+          .debug = .debug
+        ),
+        Extract.data_snapshot(
+          filepath     = file,
+          datagroups   = datagroups,
+
+          dataset          = dataset,
+          datavalue.name   = datavalue.name,
+          datagroup.leader = datagroup.leader,
+          na.warn = na.warn,
+          na.rm   = na.rm,
+
+          .debug = .debug
+        ),
+        Extract.data_simple(
+          filepath     = file,
+          datagroups   = datagroups,
+
+          dataset          = dataset,
+          datavalue.name   = datavalue.name,
+          datagroup.leader = datagroup.leader,
+          na.warn = na.warn,
+          na.rm   = na.rm,
+
+          .debug = .debug
+        )
+      )
+      data.out <- dplyr::bind_rows(data.out, dataset.data)
+    }
   }
 
   return(data.out)

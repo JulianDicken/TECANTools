@@ -17,17 +17,13 @@ Extract.data_timeseries_single <- function(
     # this is to suppress rename warnings
     .name_repair = "unique_quiet"
   )
-  # bind a data.set row to the data to differentiate data.sets
-  data.in <- cbind(
-    Dataset = dataset$Name,
-    data.in
-  )
+
   # --- Process raw data ---
   # ************************
   # ------------------------
   data.out <- data.in %>%
     dplyr::mutate(dplyr::across(
-      -c(.data$Dataset),
+      tidyr::everything(),
       ~ purrr::map_dbl(.x, ~ suppressWarnings(as.numeric(.x)))
     )
   )
@@ -50,18 +46,16 @@ Extract.data_timeseries_single <- function(
     tidyr::pivot_longer(
       cols = tidyr::matches("^[A-Z][0-9]*$"),
       names_to = "Coordinate",
-      values_to = "OD",
-      cols_vary = "slowest"
+      values_to = datavalue.name,
     ) %>%
     stats::setNames(
-      c("Dataset", "Cycle", "Time", "Temperature", "Coordinate", datavalue.name)
+      c("Cycle", "Time", "Temperature", "Coordinate", datavalue.name)
     ) %>%
     dplyr::mutate(
       Row    = as.character(gsub("[0-9]", "", .data$Coordinate)),
-      Column = as.numeric(  gsub("[A-Z]", "", .data$Coordinate)),
+      Column = as.numeric(  gsub("[A-Z]", "", .data$Coordinate))
     ) %>%
     dplyr::select(
-      .data$Dataset,
       .data$Row, .data$Column, .data$Coordinate,
       .data$Cycle, .data$Time,
       .data$Temperature,
@@ -83,6 +77,12 @@ Extract.data_timeseries_single <- function(
     data.out <- data.out %>%
       dplyr::mutate(!!rlang::sym(datagroup.name) := eval(parse(text = datagroup.conditions)))
   }
+
+  data.out <- cbind(
+    Source  = filepath,
+    Dataset = dataset$Name,
+    data.out
+  )
 
   return(data.out)
 }
