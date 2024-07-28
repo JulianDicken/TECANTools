@@ -4,7 +4,7 @@
 #' format. It then predicts what kind of data you generated and classifies each dataset based on
 #' multiple heuristics.
 #'
-#' @param filepath Path to the input file
+#' @param path Path to the input file(s) or folder
 #' @param datagroups The user-defined data groups. They follow the pattern list(group1 = list(pattern1, pattern2), group2 = list(pattern1, pattern2))
 #' @param datavalue.name The name of the value column.
 #' @param datagroup.leader The column to match the groups against. This is recommended to leave unchanged.

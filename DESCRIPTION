@@ -5,7 +5,7 @@ Version: 0.2.0
 Author: Julian Dicken
 Maintainer: Julian Dicken <julian@dicken.de>
 Description: Various R Scripts to turn TECAN excel sheets into a useable format.
-License: MIT
+License: LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:

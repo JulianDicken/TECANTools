@@ -16,6 +16,8 @@ Extract.Data(
 )
 }
 \arguments{
+\item{path}{Path to the input file(s) or folder}
+
 \item{datagroups}{The user-defined data groups. They follow the pattern list(group1 = list(pattern1, pattern2), group2 = list(pattern1, pattern2))}
 
 \item{datavalue.name}{The name of the value column.}
@@ -29,8 +31,6 @@ Extract.Data(
 \item{.datagroups.prepostfix}{This adds some sensible defaults to the regexp. Only ever touch this if you know what ^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$ means.}
 
 \item{.debug}{Toggle debug mode. Does not do much for now.}
-
-\item{filepath}{Path to the input file}
 }
 \value{
 data.frame containing all measurements in long format.

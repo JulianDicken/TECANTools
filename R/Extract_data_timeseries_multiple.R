@@ -112,6 +112,6 @@ Extract.data_timeseries_multiple <- function(
     Dataset = dataset$Name,
     data.out
   )
-  print(data.out)
+
   return(data.out)
 }

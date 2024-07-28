@@ -34,10 +34,10 @@ Plot.Layout <- function(
     cbind(
       Column = rep(datagroups.layout.Columns, times = length(datagroups.layout.Rows))
     ) %>%
-    dplyr::mutate(across(dplyr::everything(), factor))
+    dplyr::mutate(dplyr::across(dplyr::everything(), factor))
 
   datagroups.layout <- datagroups.layout %>%
-    dplyr::mutate(Coordinate = paste0(.data$Row, .data$Coordinate))
+    dplyr::mutate(Coordinate = paste0(.data$Row, .data$Column))
 
   for (datagroup.name in names(datagroups)) {
     datagroup <- datagroups[[datagroup.name]]
