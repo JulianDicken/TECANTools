@@ -20,7 +20,6 @@ Extract.data_snapshot <- function(
   )
 
   if (.debug) {
-    print(data.in)
     assign("Extract.Snapshot.raw", data.in)
   }
 

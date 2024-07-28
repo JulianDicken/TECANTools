@@ -55,7 +55,7 @@ Extract.data_timeseries_multiple <- function(
 
     data.out <- rbind(data.out, data.out.temp)
   }
-  print(data.out)
+
   data.out <- data.out %>%
     dplyr::select(-.data$.temp) %>%
     dplyr::mutate(
