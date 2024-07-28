@@ -18,28 +18,23 @@ Extract.data_timeseries_multiple <- function(
     # this is to suppress rename warnings
     .name_repair = "unique_quiet"
   )
-  # bind a data.set row to the data to differentiate data.sets
-  data.in <- cbind(
-    Dataset = dataset$Name,
-    data.in
-  )
+
   # --- Process raw data ---
   # ************************
   # ------------------------
   data.out <- data.frame()
   dataset.items_height    <- match(TRUE, is.na(data.in["Cycles / Well"])) + 1
-  dataset.items_width     <- length(colnames(data.in)) - 2
+  dataset.items_width     <- length(colnames(data.in)) - 1
   dataset.reads_per_well  <- dataset.items_height - 7
 
   for (i in seq(1, nrow(data.in), by = dataset.items_height)) {
     data.out.temp <- data.frame(
       .temp = rep(NA, times = dataset.items_width * dataset.reads_per_well)
     )
-    data.out.temp$Dataset       <- rep(data.in[i, 1], each = dataset.items_width * dataset.reads_per_well)
-    data.out.temp$Coordinate    <- rep(data.in[i, 2], each = dataset.items_width * dataset.reads_per_well)
-    data.out.temp$Cycle         <- rep(as.numeric(data.in[i, -c(1:2)]), each = dataset.reads_per_well)
-    data.out.temp$Time          <- rep(as.numeric(data.in[i + 1, -c(1:2)]), each = dataset.reads_per_well)
-    data.out.temp$Temperature   <- rep(as.numeric(data.in[i + 2, -c(1:2)]), each = dataset.reads_per_well)
+    data.out.temp$Coordinate    <- rep(as.character(data.in[i, 1], each = dataset.items_width * dataset.reads_per_well))
+    data.out.temp$Cycle         <- rep(as.numeric(data.in[i, -1]), each = dataset.reads_per_well)
+    data.out.temp$Time          <- rep(as.numeric(data.in[i + 1, -1]), each = dataset.reads_per_well)
+    data.out.temp$Temperature   <- rep(as.numeric(data.in[i + 2, -1]), each = dataset.reads_per_well)
 
     data.out.temp[datavalue.name] <-
       data.in[
@@ -47,7 +42,7 @@ Extract.data_timeseries_multiple <- function(
           i + 5,
           i + 4 + dataset.reads_per_well
         ),
-        -c(1:2)
+        -1
       ] %>%
       tidyr::pivot_longer(
         cols = tidyr::everything(),
@@ -60,12 +55,12 @@ Extract.data_timeseries_multiple <- function(
 
     data.out <- rbind(data.out, data.out.temp)
   }
-
+  print(data.out)
   data.out <- data.out %>%
     dplyr::select(-.data$.temp) %>%
     dplyr::mutate(
       dplyr::across(
-        -c(.data$Dataset, .data$Coordinate),
+        -c(.data$Coordinate),
         ~purrr::map_dbl(.x, ~ suppressWarnings(as.numeric(.x)))
       )
     )
@@ -90,7 +85,6 @@ Extract.data_timeseries_multiple <- function(
       Column = as.numeric(  gsub("[A-Z]", "", .data$Coordinate)),
     ) %>%
     dplyr::select(
-      .data$Dataset,
       .data$Row, .data$Column, .data$Coordinate,
       .data$Cycle, .data$Time,
       .data$Temperature,
@@ -113,5 +107,11 @@ Extract.data_timeseries_multiple <- function(
       dplyr::mutate(!!rlang::sym(datagroup.name) := eval(parse(text = datagroup.conditions)))
   }
 
+  data.out <- cbind(
+    Source  = filepath,
+    Dataset = dataset$Name,
+    data.out
+  )
+  print(data.out)
   return(data.out)
 }
