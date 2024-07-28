@@ -1,7 +1,7 @@
 Package: TECANTools
 Type: Package
 Title: Various R Scripts to turn TECAN excel sheets into a useable format
-Version: 0.1.0
+Version: 0.2.0
 Author: Julian Dicken
 Maintainer: Julian Dicken <julian@dicken.de>
 Description: Various R Scripts to turn TECAN excel sheets into a useable format.
