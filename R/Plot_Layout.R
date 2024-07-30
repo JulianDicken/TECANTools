@@ -49,7 +49,7 @@ Plot.Layout <- function(
   }
   datagroups.layout.labels <- datagroups.layout %>%
     dplyr::select(
-      -.data$Row, -.data$Column
+      -.data$Row, -.data$Column, -.data$Coordinate
     ) %>%
     dplyr::mutate(
       Label = apply(dplyr::across(dplyr::everything()), 1, paste, collapse = "\n ")
