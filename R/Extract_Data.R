@@ -89,7 +89,7 @@ Extract.Data <- function(
       dataset <- datasets[i, ]
       print(paste0(
         "Extracting dataset with name '", dataset$Name,
-        "' at '", dataset$Range, "'"
+        "' at '", dataset$Range, "' From file: ", dataset$filepath
       ))
       dataset.data <- switch(match(dataset$Kind, datasets.meta$Kind),
         Extract.data_timeseries_multiple(
