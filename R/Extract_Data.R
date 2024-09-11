@@ -34,7 +34,7 @@ Extract.Data <- function(
   # ------------------------------------------------
   files <- unlist(lapply(as.vector(path), function(p) {
     p.valid_suffixes <- c("xls", "xlsx")
-    p.valid_pattern <- paste0(".*\\.(", paste0(p.valid_suffixes, collapse = "|"),")$")
+    p.valid_pattern <- paste0("^[^~].*\\.(", paste0(p.valid_suffixes, collapse = "|"),")$")
 
     p.modified <- paste0(path, "." ,p.valid_suffixes)
     p.existing <- file.exists(p.modified)
@@ -89,7 +89,7 @@ Extract.Data <- function(
       dataset <- datasets[i, ]
       print(paste0(
         "Extracting dataset with name '", dataset$Name,
-        "' at '", dataset$Range, "' , from file: ", dataset$filepath
+        "' at '", dataset$Range, "', from file: ", file, " is kind: ", dataset$Kind
       ))
       dataset.data <- switch(match(dataset$Kind, datasets.meta$Kind),
         Extract.data_timeseries_multiple(

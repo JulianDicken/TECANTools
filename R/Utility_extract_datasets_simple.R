@@ -6,7 +6,14 @@ Utility.extract_datasets_simple <- function(
   dataset.nidx <- dataset$NIDX
   dataset.qidx <- dataset$QIDX
   dataset.items_width  <- sum(!is.na(data.raw[dataset.qidx + 1, ]))
-  dataset.items_height <- match(TRUE, is.na(data.raw[(dataset.qidx + 1):nrow(data.raw), 1])) - 1
+  print(is.na(data.raw[(dataset.qidx + 1):nrow(data.raw) + 1, 1]))
+  dataset.items_height <- match(TRUE, is.na(data.raw[(dataset.qidx + 1):nrow(data.raw) + 1, 1]))
+
+  print((dataset.qidx + 1))
+  print(nrow(data.raw))
+  print(dataset.items_height)
+  print(dataset.items_width)
+
   return(paste0(
     Utility.excel_to_colindex(1), dataset.qidx,
     ":",
