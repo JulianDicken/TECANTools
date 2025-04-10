@@ -38,6 +38,7 @@ Extract.Data <- function(
 
     p.modified <- paste0(path, "." ,p.valid_suffixes)
     p.existing <- file.exists(p.modified)
+
     if (dir.exists(p)) {
       return(paste0(p, "/", list.files(
         p, pattern = p.valid_pattern
@@ -74,7 +75,6 @@ Extract.Data <- function(
   data.out <- data.frame()
 
   for (file in files) {
-
     # --- Extract Datasets ---
     # ************************
     # ------------------------
@@ -141,6 +141,7 @@ Extract.Data <- function(
           .debug = .debug
         )
       )
+
       data.out <- dplyr::bind_rows(data.out, dataset.data)
     }
   }

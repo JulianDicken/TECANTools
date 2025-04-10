@@ -37,7 +37,8 @@ Extract.data_simple <- function(
       values_to = datavalue.name
     ) %>%
     dplyr::mutate(
-      Coordinate = paste0(.data$Row, .data$Column)
+      Coordinate = paste0(.data$Row, .data$Column),
+      Column = as.numeric(.data$Column)
     ) %>%
     dplyr::mutate(dplyr::across(
         datavalue.name,
