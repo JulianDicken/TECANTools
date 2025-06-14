@@ -4,7 +4,7 @@ Title: Various R Scripts to turn TECAN excel sheets into a useable format
 Version: 0.2.2
 Author: Julian Dicken
 Maintainer: Julian Dicken <julian@dicken.de>
-Description: Various R Scripts to turn TECAN excel sheets into a useable format.
+Description: Various R Scripts to turn TECAN excel sheets into a data.frame based format.
 License: LICENSE
 Encoding: UTF-8
 LazyData: true
